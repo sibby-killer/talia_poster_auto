@@ -1,0 +1,43 @@
+name: Auto Post to Facebook (US EST Times)
+
+# GitHub Actions uses UTC. EST = UTC-5, EDT = UTC-4
+# Target US EST prime times: 8AM, 12PM, 3PM, 6PM, 8PM, 10PM EST
+# In UTC: 13:00, 17:00, 20:00, 23:00, 01:00, 03:00
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 8:00 AM EST
+    - cron: '0 17 * * *'   # 12:00 PM EST (noon)
+    - cron: '0 20 * * *'   # 3:00 PM EST
+    - cron: '0 23 * * *'   # 6:00 PM EST (evening peak)
+    - cron: '0 1 * * *'    # 8:00 PM EST
+    - cron: '0 3 * * *'    # 10:00 PM EST (night owls)
+  workflow_dispatch:        # Allow manual trigger from GitHub UI
+
+jobs:
+  post_content:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run AI Post Job
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
+          RENDER_EXTERNAL_URL: ${{ secrets.RENDER_EXTERNAL_URL }}
+        run: python run_post_job.py

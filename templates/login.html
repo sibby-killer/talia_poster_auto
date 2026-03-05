@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In | Community App</title>
+    <!-- Outfit Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="blob blob-1" style="background: radial-gradient(circle, #43e97b, transparent 70%);"></div>
+    <div class="blob blob-2" style="background: radial-gradient(circle, #38f9d7, transparent 70%);"></div>
+
+    <div class="container" style="max-width: 400px;">
+        <div class="glass-card">
+            <div class="header">
+                <a href="/"
+                    style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; float: left;"><i
+                        class="fa-solid fa-arrow-left"></i> Home</a>
+                <div style="clear:both;"></div>
+                <h1 style="background: linear-gradient(to right, #43e97b, #38f9d7); -webkit-background-clip: text;">
+                    Welcome Back</h1>
+                <p>Log in to view your submissions.</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="notification-area"
+                style="display: block; margin-bottom: 1.5rem; border-color: {% if category == 'error' %}#ef4444{% else %}#10b981{% endif %}; background: {% if category == 'error' %}rgba(239, 68, 68, 0.1){% else %}rgba(16, 185, 129, 0.1){% endif %};">
+                <p style="color: {% if category == 'error' %}#ef4444{% else %}#10b981{% endif %};">{{ message }}</p>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form action="/auth/login" method="POST">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Your password" required>
+                </div>
+
+                <button type="submit" class="btn-submit"
+                    style="background: linear-gradient(to right, #43e97b, #38f9d7); box-shadow: 0 4px 15px rgba(56, 249, 215, 0.3); color: #0d0f1c;">Log
+                    In</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                Don't have an account? <a href="/register"
+                    style="color: #43e97b; text-decoration: none; font-weight: 600;">Sign up here</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

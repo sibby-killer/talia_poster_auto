@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Community | Find Connections</title>
+    <!-- Outfit Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Background Animations -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container">
+        <div class="glass-card">
+            <div class="header">
+                <h1>Find Your Vibe</h1>
+                <p>Join our exclusive community to meet new friends or find your perfect partner.</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="notification-area" style="display: block; margin-bottom: 1.5rem; border-color: {% if category == 'error' %}#ef4444{% else %}#10b981{% endif %}; background: {% if category == 'error' %}rgba(239, 68, 68, 0.1){% else %}rgba(16, 185, 129, 0.1){% endif %};">
+                            <p style="color: {% if category == 'error' %}#ef4444{% else %}#10b981{% endif %};">{{ message }}</p>
+                            {% if category == 'success' %}
+                                <p style="color: #ffffff; font-size: 0.85rem; margin-top: 10px;">Want to track your post status or edit it later? <br><a href="/register">Sign up for an account</a></p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="/submit" method="POST" enctype="multipart/form-data">
+                
+                <div class="form-group">
+                    <label>Upload Your Best Photo</label>
+                    <div class="file-upload" id="drop-area">
+                        <input type="file" name="photo" id="photo" accept="image/*" required onchange="handleFile(this)">
+                        <div class="file-upload-text" id="file-name-display">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Tap to upload or drag & drop</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="handle">Name or Social Handle</label>
+                    <input type="text" id="handle" name="handle" placeholder="e.g. @janedoe or Jane" required>
+                </div>
+
+                <div class="form-group" style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="intent">Looking For</label>
+                        <select id="intent" name="intent" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Friendship">Friendship</option>
+                            <option value="Partner">Partner</option>
+                            <option value="Networking">Networking</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="whatsapp">WhatsApp Number (Optional, for connections)</label>
+                    <input type="tel" id="whatsapp" name="whatsapp" placeholder="+1234567890">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">A short bio to attract your vibe</label>
+                    <textarea id="description" name="description" placeholder="A bit about yourself and what kind of people you want to vibe with..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit to Community</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                Already submitted? <a href="/login" style="color: var(--accent-color); text-decoration: none; font-weight: 600;">Log in returning user</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleFile(input) {
+            const display = document.getElementById('file-name-display');
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                display.innerHTML = '<i class="fa-solid fa-check-circle" style="color: var(--success);"></i><span>' + fileName + ' selected</span>';
+            }
+        }
+    </script>
+</body>
+</html>
