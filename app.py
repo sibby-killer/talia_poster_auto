@@ -1,4 +1,5 @@
 import os
+import requests
 from functools import wraps
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, redirect, url_for, flash, session
@@ -229,6 +230,32 @@ def admin_review(sub_id):
     except Exception as e:
         return f"Error processing review: {e}"
 
+
+# --- Telegram Webhook Route ---
+@app.route('/telegram/webhook', methods=['POST'])
+def telegram_webhook():
+    from flask import jsonify
+    update = request.get_json()
+    if update:
+        from telegram_bot import handle_update
+        handle_update(update)
+    return jsonify({"ok": True})
+
+def register_telegram_webhook():
+    """Register the bot webhook with Telegram on startup."""
+    render_url = os.environ.get("RENDER_EXTERNAL_URL")
+    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    if render_url and bot_token and bot_token != "your_telegram_bot_token":
+        webhook_url = f"{render_url}/telegram/webhook"
+        r = requests.post(
+            f"https://api.telegram.org/bot{bot_token}/setWebhook",
+            json={"url": webhook_url}
+        )
+        print(f"Telegram webhook registered: {r.json()}")
+    else:
+        print("Skipping Telegram webhook registration (no RENDER_EXTERNAL_URL set).")
+
 if __name__ == '__main__':
+    register_telegram_webhook()
     start_scheduler()
     app.run(debug=True, port=5000)
